@@ -1,0 +1,161 @@
+$kind: http-request
+name: GET Booking - Valid ID
+url: "{{baseUrl}}/booking/{{validId}}"
+method: GET
+scripts:
+  - type: afterResponse
+    code: "const response = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Status is 200\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response should be JSON\", () => {\r
+
+      \    pm.response.to.be.json;\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response should contain all required properties\", () => {\r
+
+      \r
+
+      \    pm.expect(response).to.have.all.keys(\r
+
+      \        \"firstname\",\r
+
+      \        \"lastname\",\r
+
+      \        \"totalprice\",\r
+
+      \        \"depositpaid\",\r
+
+      \        \"bookingdates\",\r
+
+      \        \"additionalneeds\"\r
+
+      \    );\r
+
+      \r
+
+      });\r
+
+      \r
+
+      pm.test(\"Booking dates should contain checkin and checkout\", () => {\r
+
+      \r
+
+      \    pm.expect(response.bookingdates).to.have.all.keys(\r
+
+      \        \"checkin\",\r
+
+      \        \"checkout\"\r
+
+      \    );\r
+
+      \r
+
+      });\r
+
+      \r
+
+      pm.test(\"Properties should have correct data types\", () => {\r
+
+      \r
+
+      \    pm.expect(response.firstname).to.be.a(\"string\");\r
+
+      \    pm.expect(response.lastname).to.be.a(\"string\");\r
+
+      \r
+
+      \    pm.expect(response.totalprice).to.be.a(\"number\");\r
+
+      \r
+
+      \    pm.expect(response.depositpaid).to.be.a(\"boolean\");\r
+
+      \r
+
+      \    pm.expect(response.additionalneeds).to.be.a(\"string\");\r
+
+      \r
+
+      \    pm.expect(response.bookingdates).to.be.an(\"object\");\r
+
+      \r
+
+      });\r
+
+      \r
+
+      pm.test(\"Booking dates should have valid ISO format\", () => {\r
+
+      \r
+
+      \    const dateRegex = /^\\d{4}-\\d{2}-\\d{2}$/;\r
+
+      \r
+
+      \    pm.expect(response.bookingdates.checkin).to.match(dateRegex);\r
+
+      \    pm.expect(response.bookingdates.checkout).to.match(dateRegex);\r
+
+      \r
+
+      });\r
+
+      \r
+
+      pm.test(\"Checkout date should be after checkin date\", () => {\r
+
+      \r
+
+      \    const checkin = new Date(response.bookingdates.checkin);\r
+
+      \    const checkout = new Date(response.bookingdates.checkout);\r
+
+      \r
+
+      \    pm.expect(checkout).to.be.above(checkin);\r
+
+      \r
+
+      });\r
+
+      \r
+
+      pm.test(\"Total price should be greater than zero\", () => {\r
+
+      \r
+
+      \    pm.expect(response.totalprice).to.be.above(0);\r
+
+      \r
+
+      });\r
+
+      \r
+
+      pm.test(\"Firstname and lastname should not be empty\", () => {\r
+
+      \r
+
+      \    pm.expect(response.firstname.trim()).to.not.eql(\"\");\r
+
+      \    pm.expect(response.lastname.trim()).to.not.eql(\"\");\r
+
+      \r
+
+      });"
+    language: text/javascript
+order: 1972909505082723

@@ -1,0 +1,55 @@
+$kind: collection
+name: Token Cookie
+scripts:
+  - type: http:beforeRequest
+    code: "pm.sendRequest({\r
+
+      \    url: `${pm.environment.get(\"baseUrl\")}/auth`,\r
+
+      \    method: \"POST\",\r
+
+      \    header: {\r
+
+      \        \"Content-Type\": \"application/json\"\r
+
+      \    },\r
+
+      \    body: {\r
+
+      \        mode: \"raw\",\r
+
+      \        raw: JSON.stringify({\r
+
+      \            username: pm.environment.get(\"username\"),\r
+
+      \            password: pm.environment.get(\"password\")\r
+
+      \        })\r
+
+      \    }\r
+
+      }, (err, res) => {\r
+
+      \    if (err){\r
+
+      \        console.error(err);\r
+
+      \    }\r
+
+      \r
+
+      \    const token = res.json().token;\r
+
+      \    if (!token){\r
+
+      \        console.error(\"Error duing getting the token \")\r
+
+      \    }\r
+
+      \r
+
+      \    pm.collectionVariables.set(\"token\", token);\r
+
+      });"
+    language: text/javascript
+order: 8943

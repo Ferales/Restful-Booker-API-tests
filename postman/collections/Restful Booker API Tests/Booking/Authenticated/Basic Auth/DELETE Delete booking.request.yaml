@@ -1,0 +1,42 @@
+$kind: http-request
+name: DELETE Delete booking
+url: "{{baseUrl}}/booking/{{validId2}}"
+method: DELETE
+auth:
+  type: basic
+  credentials:
+    username: "{{username}}"
+    password: "{{password}}"
+scripts:
+  - type: beforeRequest
+    code: ""
+    language: text/javascript
+  - type: afterResponse
+    code: "pm.test(\"Status code is 201\", () => {\r
+
+      \    pm.response.to.have.status(201);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response body is 'Created'\", () => {\r
+
+      \    pm.expect(pm.response.text()).to.equal(\"Created\");\r
+
+      });\r
+
+      \r
+
+      pm.sendRequest(`${pm.environment.get(\"baseUrl\")}/booking/${pm.collectio\
+      nVariables.get(\"validId\")}`, (err, res) => {\r
+
+      \    pm.test(\"Booking should no longer exist\", () => {\r
+
+      \        pm.expect(res.code).to.equal(404);\r
+
+      \    });\r
+
+      });"
+    language: text/javascript
+order: 4503598249427146

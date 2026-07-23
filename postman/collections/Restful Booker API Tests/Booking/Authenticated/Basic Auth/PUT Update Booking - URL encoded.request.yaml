@@ -1,0 +1,79 @@
+$kind: http-request
+name: PUT Update Booking - URL encoded
+description: ""
+url: "{{baseUrl}}/booking/{{validId2}}"
+method: PUT
+headers:
+  Content-Type: application/x-www-form-urlencoded
+body:
+  type: urlencoded
+  content:
+    firstname: Test
+    lastname: Api
+    totalprice: "512"
+    depositpaid: "false"
+    bookingdates[checkin]: 2026-07-18
+    bookingdates[checkout]: 2026-08-01
+    additionalneeds: Extra meal
+auth:
+  type: basic
+  credentials:
+    username: "{{username}}"
+    password: "{{password}}"
+scripts:
+  - type: afterResponse
+    code: "\r
+
+      const response = pm.response.json();\r
+
+      const form = pm.request.body.urlencoded.all();\r
+
+      \r
+
+      const expectedData = {\r
+
+      \    firstname: form.find(x => x.key === \"firstname\").value,\r
+
+      \    lastname: form.find(x => x.key === \"lastname\").value,\r
+
+      \    totalprice: Number(form.find(x => x.key === \"totalprice\").value),\r
+
+      \    depositpaid: form.find(x => x.key === \"depositpaid\").value === \"true\",\r
+
+      \    bookingdates: {\r
+
+      \        checkin: form.find(x => x.key === \"bookingdates[checkin]\").value,\r
+
+      \        checkout: form.find(x => x.key === \"bookingdates[checkout]\").value\r
+
+      \    },\r
+
+      \    additionalneeds: form.find(x => x.key === \"additionalneeds\").value\r
+
+      };\r
+
+      \r
+
+      pm.test(\"Status is 200\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response should be JSON\", () => {\r
+
+      \    pm.response.to.be.json;\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response booking should be equal to request booking\", () => {\r
+
+      \    pm.expect(response).to.deep.equal(expectedData);\r
+
+      });"
+    language: text/javascript
+order: 4376031954579848

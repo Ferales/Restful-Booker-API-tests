@@ -1,0 +1,54 @@
+$kind: http-request
+name: POST Create Booking
+url: "{{baseUrl}}/booking"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"firstname\" : \"End to end\",\r
+
+    \    \"lastname\" : \"Happy path\",\r
+
+    \    \"totalprice\" : 1234,\r
+
+    \    \"depositpaid\" : false,\r
+
+    \    \"bookingdates\" : {\r
+
+    \        \"checkin\" : \"2026-07-20\",\r
+
+    \        \"checkout\" : \"2026-08-03\"\r
+
+    \    },\r
+
+    \    \"additionalneeds\" : \"Full coverage\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "const response = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Booking Created\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Booking id returned\", () => {\r
+
+      \    pm.expect(response.bookingid).to.be.a(\"number\");\r
+
+      });\r
+
+      \r
+
+      pm.collectionVariables.set(\"e2eBookingId\", response.bookingid);\r
+
+      pm.collectionVariables.set(\"e2eBooking\", JSON.stringify(response.booking));"
+    language: text/javascript
+order: 4458737720024425

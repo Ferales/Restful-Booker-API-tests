@@ -1,0 +1,34 @@
+$kind: http-request
+name: PUT Update Booking - Missing field
+url: "{{baseUrl}}/booking/{{validId}}"
+method: PUT
+headers:
+  Cookie: token={{token}}
+body:
+  type: json
+  content: "{\r
+
+    \    \"firstname\" : \"Test\",\r
+
+    \    \"lastname\" : \"Api\",\r
+
+    \    \"depositpaid\" : true,\r
+
+    \    \"bookingdates\" : {\r
+
+    \        \"checkin\" : \"2026-07-18\",\r
+
+    \        \"checkout\" : \"2026-08-01\"\r
+
+    \    }\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status is 400\", () => {\r
+
+      \    pm.response.to.have.status(400);\r
+
+      })"
+    language: text/javascript
+order: 3873802897353625

@@ -1,0 +1,30 @@
+$kind: http-request
+name: GET Updated Booking
+url: "{{baseUrl}}/booking/{{e2eBookingId}}"
+method: GET
+scripts:
+  - type: beforeRequest
+    code: ""
+    language: text/javascript
+  - type: afterResponse
+    code: "const response = pm.response.json();\r
+
+      const booking = JSON.parse(pm.collectionVariables.get(\"e2eBooking\"));\r
+
+      \r
+
+      pm.test(\"Updated booking exists\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Booking details match after update\", () => {\r
+
+      \    pm.expect(response).to.deep.equal(booking);\r
+
+      });"
+    language: text/javascript
+order: 4503589417354795

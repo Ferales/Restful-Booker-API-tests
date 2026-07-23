@@ -1,0 +1,46 @@
+$kind: http-request
+name: PUT Update Booking - Invalid Cookie
+url: "{{baseUrl}}/booking/{{validId}}"
+method: PUT
+headers:
+  Cookie: token=invalid
+body:
+  type: json
+  content: "{\r
+
+    \    \"firstname\" : \"Test\",\r
+
+    \    \"lastname\" : \"Api\",\r
+
+    \    \"totalprice\" : 512,\r
+
+    \    \"depositpaid\" : false,\r
+
+    \    \"bookingdates\" : {\r
+
+    \        \"checkin\" : \"2026-07-18\",\r
+
+    \        \"checkout\" : \"2026-08-01\"\r
+
+    \    },\r
+
+    \    \"additionalneeds\" : \"Extra meal\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status is 403\", () => {\r
+
+      \    pm.response.to.have.status(403);\r
+
+      })\r
+
+      \r
+
+      pm.test(\"Response is 'Forbidden'\", () => {\r
+
+      \    pm.response.to.have.body('Forbidden');\r
+
+      })\r\n"
+    language: text/javascript
+order: 4501808436298230

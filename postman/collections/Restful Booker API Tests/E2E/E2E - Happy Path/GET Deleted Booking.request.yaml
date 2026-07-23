@@ -1,0 +1,21 @@
+$kind: http-request
+name: GET Deleted Booking
+url: "{{baseUrl}}/booking/{{e2eBookingId}}"
+method: GET
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Booking doesn't exist\", () => {\r
+
+      \    pm.response.to.have.status(404);\r
+
+      })\r
+
+      \r
+
+      pm.test(\"Response is 'Not Found'\", () => {\r
+
+      \    pm.response.to.have.body('Not Found');\r
+
+      })"
+    language: text/javascript
+order: 4503598678476089

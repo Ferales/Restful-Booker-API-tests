@@ -1,0 +1,46 @@
+$kind: http-request
+name: PUT Update Booking
+url: "{{baseUrl}}/booking/{{e2eBookingId}}"
+method: PUT
+headers:
+  Cookie: token={{e2eToken}}
+body:
+  type: json
+  content: "{\r
+
+    \    \"firstname\" : \"End to end updated\",\r
+
+    \    \"lastname\" : \"New value\",\r
+
+    \    \"totalprice\" : 4321,\r
+
+    \    \"depositpaid\" : true,\r
+
+    \    \"bookingdates\" : {\r
+
+    \        \"checkin\" : \"2026-07-23\",\r
+
+    \        \"checkout\" : \"2026-08-12\"\r
+
+    \    },\r
+
+    \    \"additionalneeds\" : \"Full coverage after update\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "const response = pm.response.json();\r
+
+      \r
+
+      pm.test(\"Booking Updated\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.collectionVariables.set(\"e2eBooking\", JSON.stringify(response));"
+    language: text/javascript
+order: 4500287345028643

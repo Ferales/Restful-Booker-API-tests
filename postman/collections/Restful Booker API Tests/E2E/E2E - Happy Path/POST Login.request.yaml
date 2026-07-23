@@ -1,0 +1,42 @@
+$kind: http-request
+name: POST Login
+url: "{{baseUrl}}/auth"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"username\": \"{{username}}\",\r
+
+    \    \"password\": \"{{password}}\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "const response = pm.response.json()\r
+
+      \r
+
+      pm.test(\"Login successful\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Token returned\", () => {\r
+
+      \    pm.expect(response).to.have.property(\"token\");\r
+
+      \    pm.expect(response.token).to.be.a(\"string\");\r
+
+      \    pm.expect(response.token).to.not.be.empty;\r
+
+      });\r
+
+      \r
+
+      pm.collectionVariables.set(\"e2eToken\", pm.response.json().token);"
+    language: text/javascript
+order: 1784807774738

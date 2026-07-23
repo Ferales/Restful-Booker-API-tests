@@ -1,0 +1,16 @@
+# Local Postman data
+postman/globals/
+*.local.environment.yaml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# IntelliJ
+.idea/
+
+# Logs
+*.log

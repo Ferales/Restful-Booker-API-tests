@@ -1,0 +1,15 @@
+$kind: http-request
+name: DEL Delete Booking
+url: "{{baseUrl}}/booking/{{e2eBookingId}}"
+method: DELETE
+headers:
+  Cookie: token={{e2eToken}}
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Delete request succeeded\", () => {\r
+
+      \    pm.response.to.have.status(201);\r
+
+      })"
+    language: text/javascript
+order: 4503591006063100

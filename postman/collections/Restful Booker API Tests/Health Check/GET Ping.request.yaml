@@ -1,0 +1,22 @@
+$kind: http-request
+url: "{{baseUrl}}/ping"
+method: GET
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status code is 201\", () => {\r
+
+      \    pm.response.to.have.status(201);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response time is below 500ms\", () => {\r
+
+      \    pm.expect(pm.response.responseTime)\r
+
+      \        .to.be.below(500);\r
+
+      });"
+    language: text/javascript
+order: 1784306293717

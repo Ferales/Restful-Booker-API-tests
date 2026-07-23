@@ -1,0 +1,70 @@
+$kind: http-request
+name: POST Create Booking - JSON
+url: "{{baseUrl}}/booking"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"firstname\" : \"Test\",\r
+
+    \    \"lastname\" : \"Api\",\r
+
+    \    \"totalprice\" : 512,\r
+
+    \    \"depositpaid\" : true,\r
+
+    \    \"bookingdates\" : {\r
+
+    \        \"checkin\" : \"2026-07-18\",\r
+
+    \        \"checkout\" : \"2026-08-01\"\r
+
+    \    },\r
+
+    \    \"additionalneeds\" : \"Extra meal\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "const response = pm.response.json();\r
+
+      const expectedData = JSON.parse(pm.request.body.raw);\r
+
+      \r
+
+      pm.test(\"Status is 200\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response should be JSON\", () => {\r
+
+      \    pm.response.to.be.json;\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response booking should be equal to request booking\", () => {\r
+
+      \    pm.expect(response.booking).to.deep.equal(expectedData);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response should contain valid bookingid\", () => {\r
+
+      \    pm.expect(response).to.have.property(\"bookingid\");\r
+
+      \    pm.expect(response.bookingid).to.be.a(\"number\");\r
+
+      \    pm.expect(response.bookingid).to.be.above(0);\r
+
+      });"
+    language: text/javascript
+order: 4502761268340748

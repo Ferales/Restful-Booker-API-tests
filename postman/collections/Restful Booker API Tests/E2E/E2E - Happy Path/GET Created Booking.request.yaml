@@ -1,0 +1,27 @@
+$kind: http-request
+name: GET Created Booking
+url: "{{baseUrl}}/booking/{{e2eBookingId}}"
+method: GET
+scripts:
+  - type: afterResponse
+    code: "const response = pm.response.json();\r
+
+      const booking = JSON.parse(pm.collectionVariables.get(\"e2eBooking\"));\r
+
+      \r
+
+      pm.test(\"Booking exists\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Booking details match\", () => {\r
+
+      \    pm.expect(response).to.deep.equal(booking);\r
+
+      });"
+    language: text/javascript
+order: 4500001981593260

@@ -1,0 +1,21 @@
+$kind: http-request
+name: GET Booking - Non-existing ID
+url: "{{baseUrl}}/booking/99999999"
+method: GET
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status is 404\", () => {\r
+
+      \    pm.response.to.have.status(404);\r
+
+      })\r
+
+      \r
+
+      pm.test(\"Response is 'Not Found'\", () => {\r
+
+      \    pm.expect(pm.response.text()).to.eql(\"Not Found\");\r
+
+      })"
+    language: text/javascript
+order: 4497965518960979

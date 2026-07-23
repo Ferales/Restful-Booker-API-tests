@@ -1,0 +1,8 @@
+name: Test
+values:
+  - key: baseUrl
+    value: 'https://restful-booker.herokuapp.com'
+  - key: username
+    value: ''
+  - key: password
+    value: ''

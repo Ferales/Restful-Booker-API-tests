@@ -1,0 +1,20 @@
+[
+  {
+    "testCaseId": "AUTH-007",
+    "scenario": "Missing username field",
+    "includeUsername": false,
+    "includePassword": true
+  },
+  {
+    "testCaseId": "AUTH-008",
+    "scenario": "Missing password field",
+    "includeUsername": true,
+    "includePassword": false
+  },
+  {
+    "testCaseId": "AUTH-009",
+    "scenario": "Empty body",
+    "includeUsername": false,
+    "includePassword": false
+  }
+]

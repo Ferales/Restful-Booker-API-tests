@@ -1,0 +1,77 @@
+$kind: http-request
+name: PATCH Partial Update Booking - JSON
+url: "{{baseUrl}}/booking/{{validId2}}"
+method: PATCH
+headers:
+  Cookie: token={{token}}
+body:
+  type: json
+  content: "{\r
+
+    \    \"firstname\" : \"Test\",\r
+
+    \    \"lastname\" : \"Api\",\r
+
+    \    \"bookingdates\" : {\r
+
+    \        \"checkin\" : \"2026-07-18\"\r
+
+    \    }\r
+
+    }"
+auth:
+  type: basic
+  credentials:
+    password: "{{password}}"
+    username: "{{username}}"
+scripts:
+  - type: afterResponse
+    code: "const response = pm.response.json();\r
+
+      const expectedData = JSON.parse(pm.request.body.raw);\r
+
+      \r
+
+      const compareObjects = (expected, actual) => {\r
+
+      \    Object.keys(expected).forEach(key => {\r
+
+      \        if (typeof expected[key] === \"object\" && expected[key] !== null) {\r
+
+      \            compareObjects(expected[key], actual[key]);\r
+
+      \        } else {\r
+
+      \            pm.expect(actual[key]).to.eql(expected[key]);\r
+
+      \        }\r
+
+      \    });\r
+
+      }\r
+
+      \r
+
+      pm.test(\"Status is 200\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      })\r
+
+      \r
+
+      pm.test(\"Response should be JSON\", () => {\r
+
+      \    pm.response.to.be.json;\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Updated fields should match the response booking\", () => {\r
+
+      \    compareObjects(expectedData, response);\r
+
+      })"
+    language: text/javascript
+order: 4500955504395052

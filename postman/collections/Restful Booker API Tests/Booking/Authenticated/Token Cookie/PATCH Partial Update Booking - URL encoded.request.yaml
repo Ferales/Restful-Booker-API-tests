@@ -1,0 +1,65 @@
+$kind: http-request
+name: PATCH Partial Update Booking - URL encoded
+url: "{{baseUrl}}/booking/{{validId}}"
+method: PATCH
+headers:
+  Cookie: token={{token}}
+  Content-Type: application/x-www-form-urlencoded
+body:
+  type: urlencoded
+  content:
+    totalprice: "512"
+    depositpaid: "false"
+scripts:
+  - type: afterResponse
+    code: "\r
+
+      const response = pm.response.json();\r
+
+      \r
+
+      const compareObjects = (expected, actual) => {\r
+
+      \    Object.keys(expected).forEach(key => {\r
+
+      \        if (typeof expected[key] === \"object\" && expected[key] !== null) {\r
+
+      \            compareObjects(expected[key], actual[key]);\r
+
+      \        } else {\r
+
+      \            pm.expect(actual[key]).to.eql(expected[key]);\r
+
+      \        }\r
+
+      \    });\r
+
+      }\r
+
+      \r
+
+      pm.test(\"Status is 200\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Response should be JSON\", () => {\r
+
+      \    pm.response.to.be.json;\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Updated fields should match the response booking\", () => {\r
+
+      \    pm.expect(response.totalprice).to.eql(512);  \r
+
+      \    pm.expect(response.depositpaid).to.eql(false);\r
+
+      })"
+    language: text/javascript
+order: 4231985814520392

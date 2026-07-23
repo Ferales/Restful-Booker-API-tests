@@ -1,0 +1,85 @@
+$kind: http-request
+name: PATCH Partial Update Booking - XML
+url: "{{baseUrl}}/booking/{{validId}}"
+method: PATCH
+headers:
+  Cookie: token={{token}}
+  Content-Type: text/xml
+body:
+  type: json
+  content: " <booking>\r
+
+    \     <totalprice>512</totalprice>\r
+
+    \     <depositpaid>true</depositpaid>\r
+
+    \     <bookingdates>\r
+
+    \         <checkout>2026-08-01</checkout>\r
+
+    \     </bookingdates>\r
+
+    \     <additionalneeds>Extra meal</additionalneeds>\r
+
+    \ </booking>"
+scripts:
+  - type: afterResponse
+    code: "const response = pm.response.json();\r
+
+      const expectedData = xml2Json(pm.request.body.raw).booking;\r
+
+      \r
+
+      const compareObjects = (expected, actual) => {\r
+
+      \    Object.keys(expected).forEach(key => {\r
+
+      \        if (typeof expected[key] === \"object\" && expected[key] !==
+      null) {\r
+
+      \            compareObjects(expected[key], actual[key]);\r
+
+      \        } else {\r
+
+      \            pm.expect(actual[key]).to.eql(expected[key]);\r
+
+      \        }\r
+
+      \    });\r
+
+      }\r
+
+      \r
+
+      //expectedData after parsing from xml to json have all fields as strings,
+      so we need to convert them to correct types before comparison\r
+
+      expectedData.totalprice = Number(expectedData.totalprice);\r
+
+      expectedData.depositpaid = expectedData.depositpaid === \"true\";\r
+
+      \r
+
+      pm.test(\"Status is 200\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      })\r
+
+      \r
+
+      pm.test(\"Response should be JSON\", () => {\r
+
+      \    pm.response.to.be.json;\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Updated fields should match the response booking\", () => {\r
+
+      \    compareObjects(expectedData, response);\r
+
+      })"
+    language: text/javascript
+order: 4334612191381430

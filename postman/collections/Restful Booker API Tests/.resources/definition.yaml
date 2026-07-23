@@ -1,0 +1,9 @@
+$kind: collection
+name: Restful Booker API Tests
+variables:
+  token: ""
+  validId: ""
+  validId2: ""
+  e2eBookingId: ""
+  e2eBooking: ""
+  e2eToken: ""
