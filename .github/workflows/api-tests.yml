@@ -1,0 +1,121 @@
+name: Restful Booker API Tests
+
+on:
+  push:
+    branches:
+      - master
+
+  pull_request:
+    branches:
+      - master
+
+  workflow_dispatch:
+
+  schedule:
+    - cron: "0 6 * * *"
+
+jobs:
+  api-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Postman CLI
+        run: curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+
+      - name: Install aha (ANSI to HTML converter)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y aha
+
+      - name: Run API tests
+        id: run_tests
+        env:
+          RB_USERNAME: ${{ secrets.RB_USERNAME }}
+          RB_PASSWORD: ${{ secrets.RB_PASSWORD }}
+          FORCE_COLOR: "1"
+        run: |
+          set -o pipefail
+
+          EXIT_CODE=0
+
+          COLLECTION="postman/collections/Restful Booker API Tests"
+          ENVIRONMENT="postman/environments/Test.environment.yaml"
+          ENV_ARGS=(--env-var "username=$RB_USERNAME" --env-var "password=$RB_PASSWORD")
+
+          rm -f test-output.log
+
+          run_postman() {
+            echo "==================================================" | tee -a test-output.log
+            echo "$1" | tee -a test-output.log
+            echo "==================================================" | tee -a test-output.log
+
+            shift
+
+            "$@" | tee -a test-output.log
+
+            STATUS=${PIPESTATUS[0]}
+
+            if [ "$STATUS" -ne 0 ]; then
+              EXIT_CODE=1
+            fi
+          }
+
+          run_postman \
+            "Running full collection" \
+            postman collection run \
+            "$COLLECTION" \
+            -e "$ENVIRONMENT" \
+            "${ENV_ARGS[@]}"
+
+          run_postman \
+            "Running: Missing Fields" \
+            postman collection run \
+            "$COLLECTION" \
+            -e "$ENVIRONMENT" \
+            "${ENV_ARGS[@]}" \
+            -i "Authentication/POST Login - Missing Fields" \
+            -d "data/auth/missing-fields.json"
+
+          run_postman \
+            "Running: Invalid Credentials" \
+            postman collection run \
+            "$COLLECTION" \
+            -e "$ENVIRONMENT" \
+            "${ENV_ARGS[@]}" \
+            -i "Authentication/POST Login - Invalid Credentials" \
+            -d "data/auth/invalid-credentials.json"
+
+          run_postman \
+            "Running: Empty Credentials" \
+            postman collection run \
+            "$COLLECTION" \
+            -e "$ENVIRONMENT" \
+            "${ENV_ARGS[@]}" \
+            -i "Authentication/POST Login - Empty Credentials" \
+            -d "data/auth/empty-credentials.json"
+
+          echo "exit_code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
+
+      - name: Convert console output to HTML report
+        if: always()
+        run: |
+          {
+            echo "<html><head><meta charset='utf-8'><title>Restful Booker API Test Report</title></head>"
+            echo "<body style='background:#1e1e1e;color:#ddd;font-family:monospace;padding:20px;'>"
+            aha --black < test-output.log
+            echo "</body></html>"
+          } > test-report.html
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report-html
+          path: test-report.html
+
+      - name: Fail workflow if tests failed
+        if: always()
+        run: exit ${{ steps.run_tests.outputs.exit_code }}
