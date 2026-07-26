@@ -51,14 +51,8 @@ jobs:
             echo "==================================================" | tee -a test-output.log
             echo "$1" | tee -a test-output.log
             echo "==================================================" | tee -a test-output.log
-
             shift
-
-            "$@" | tee -a test-output.log
-
-            STATUS=${PIPESTATUS[0]}
-
-            if [ "$STATUS" -ne 0 ]; then
+            if ! "$@" | tee -a test-output.log; then
               EXIT_CODE=1
             fi
           }
